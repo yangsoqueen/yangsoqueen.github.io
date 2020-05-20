@@ -239,6 +239,80 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="www.yangshuquan.site/2020/05/20/intern_blog_1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Yang SQ">
+      <meta itemprop="description" content="yangshuquan">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Yang SQ">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+            
+            <a href="/2020/05/20/intern_blog_1/" class="post-title-link" itemprop="url">未命名</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-20 19:18:52" itemprop="dateCreated datePublished" datetime="2020-05-20T19:18:52+08:00">2020-05-20</time>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="实习日志-2020-5-20"><a href="#实习日志-2020-5-20" class="headerlink" title="实习日志-2020-5-20"></a>实习日志-2020-5-20</h1><h2 id="量化基本面因子研究员"><a href="#量化基本面因子研究员" class="headerlink" title="量化基本面因子研究员"></a>量化基本面因子研究员</h2><p>不知不觉已经在这家私募工作了一周左右的时间，这家私募主要做的是量化交易，分为日内高频交易以及量化因子交易。  </p>
+<hr>
+<p>日内高频交易是交易员的工作，他们会分析价量指标，根据现有的策略以及投资逻辑进行交易，日内汇总报告以及开会小结，说实话我对日内交易一直很感兴趣，但是听Keith老师都不太看好这种基于技术面指标的交易逻辑，而且可依赖型不强，交易存在较大的风险，具体还是得看每个交易员自己对整个市场的理解与判断。  </p>
+<hr>
+<p>量化因子交易就是我所在的小组负责的工作，主要包括因子研究，交易，总结归因三个方面，具体而言包括基本面因子、价量因子的分析与研究，交易策略的撰写，交易系统的对接，以及盘后因子的收益以及风险归因。<br>因子交易的逻辑本质上就是Asset Pricing，是基于APT的一种衍生，一个股票的收益和这只股票的不同风险相关，这样一来就可以用多个风险因子来解释收益，这些因子就叫做风险因子，每只股票在这个因子上的风险暴露就是β，这样一来，在一个有效市场，所有的股票都被合理定价，这样就不存在无风险套利的机会，所有的风险因子暴露都可以由β解释，股票的收益就可以完美的预期了。然而现实是直到现在股票的风险因子都没有完全的被挖掘，换句话来说整个市场都是非有效的，永远存在超额的α收益，而量化因子研究的正是这些α，探究市场上有效的α成为了我的工作重点。  </p>
+<p>大多数的私募平台都会有属于自己的研究框架以及交易系统，而我所在的私募拥有着一个比较先进的α研究框架——AlphaResearchKit,俗称ARK，这一周我主要的工作都是在ARK这个框架下展开，5.13入职第一天主要把环境配置完成：git clone核心代码、pip install wheel文件、anaconda创建ARK支持的python3.6的虚拟环境以及熟悉ARK框架，ARK框架本质上是一个基于ARK这个大类的面向对象的模块框架，其中最主要的是ark.data数据模块以及ark.BaseFactor因子模块，数据模块是我们书写因子前需要调用的不同的各类基本面数据以及价量数据，其中，ark.data.fetch()会调取计算后的因子，因子模块是我们要编写因子继承的模块，我们要基于数据模块提供的数据和自身的逻辑去编写自己的因子，其中最重要编写的一个虚函数是ark.BaseFactor.calculate(begin, end)，输入回测周期，返回一个宽形式的dataframe，行index是交易日，列columns是股票id，value是因子值。  </p>
+<p>除了编写自己的因子之外，还有另一个很重要的工作就是对编写的因子进行回测研究，具体工作包括：因子的调取、因子的中性化、信息洗漱的计算、因子相关性以及因子信息洗漱的计算、分组盈亏PNL的计算以及Long-Short Portfolio的PNL计算等等工作，这一部分的工作主要由factor_report.py的文件完成，<br>1.首先要设置参数和提取因子值，参数主要包括回测周期、收益率参考值、换手周期、股票池、IC分组、PNL分组、PNL基准、因子代码所在的目录文件以及名字等等，通过一个for循环逐个fetch相应的因子值df，利用ark.equity_return函数调取股票池中每只股票的收益df。<br>2.利用ark.RiskModel对fetch的因子值进行风险中性化，所谓的风中性化就是说去除每个因子在现有的已知因子上的风险暴露，我们可以通过barramodel模拟出一个纯因子，将这些纯因子以及收益率中性化，原有的因子去除掉这些现有的因子暴露之后就变成了比较pure的因子了。<br>3.计算信息洗漱即IC，IC是一个衡量因子好坏的很重要的指标，他会用当期的因子值和下期的收益率做相关性分析，相关性越高证明这个因子在该时间段对于市场的效果更好，rolling计算IC的值，返回ic_statistic以及ic_detail。<br>4.计算相关性即correlation，分别计算不同factor之间以及不同factor_IC之间的correlation，判断是否有风险分散的情况，对于高度相关的factor_ic，风险无法有效的分散。<br>5.计算分组盈亏PNL，基于因子值从小到大排序，分为特定组数，基于这些特定的组数，做纯多头的交易，分别计算分组相对于基准的相对收益PNL以及绝对收益PNL。<br>6.计算Long-Short_Portfolio盈亏，做空最低的组，做多做高的组，构建一个多空的投资组合，计算这个投资组合的PNL。<br>7.计算覆盖率Coverage，计算有效因子值覆盖股票池的比率，对于一些coverage比较低的因子，后续的交易难度比较大，交易比较难执行。<br>8.画图，包括分组相对盈亏PNL、分组绝对盈亏PNL以及Long-Short_Portfolio投资组合盈亏PNL。  </p>
+<p>下一期我会主要介绍一下我这周主要负责研究的因子：TK因子。</p>
+
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+          <div class="post-eof"></div>
+        
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="www.yangshuquan.site/2019/11/30/LTG/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -268,7 +342,7 @@
                 
               
 
-              <time title="创建时间：2019-11-30 19:43:01 / 修改时间：20:13:31" itemprop="dateCreated datePublished" datetime="2019-11-30T19:43:01+08:00">2019-11-30</time>
+              <time title="创建时间：2019-11-30 19:43:01 / 修改时间：20:21:45" itemprop="dateCreated datePublished" datetime="2019-11-30T19:43:01+08:00">2019-11-30</time>
             </span>
           
             
@@ -957,7 +1031,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1040,7 +1114,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
